@@ -1,0 +1,14 @@
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\bin\Debug\net8.0\ChangeTeams.deps.json
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\bin\Debug\net8.0\ChangeTeams.dll
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\bin\Debug\net8.0\ChangeTeams.pdb
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\ChangeTeams.csproj.AssemblyReference.cache
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\ChangeTeams.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\ChangeTeams.AssemblyInfoInputs.cache
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\ChangeTeams.AssemblyInfo.cs
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\ChangeTeams.csproj.CoreCompileInputs.cache
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\ChangeTeams.dll
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\refint\ChangeTeams.dll
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\ChangeTeams.pdb
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\obj\Debug\net8.0\ref\ChangeTeams.dll
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\bin\Debug\net8.0\lang\en.json
+C:\Users\Marius\Downloads\ChangeTeams\ChangeTeams\bin\Debug\net8.0\lang\ro.json
