@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Commands.Targeting;
@@ -20,9 +21,6 @@ public static class Command
             {config.Commands.Terrorist, ("Moves you to terrorist", Command_Terrorist)},
             {config.Commands.CounterTerrorist, ("Moves you to counterterrorist", Command_CounterTerrorist)},
             {config.Commands.Spectate, ("Moves you to spectate", Command_Spectate)},
-            //{config.Commands.T, ("Move the player to terrorist", Command_T) },
-            //{config.Commands.CT, ("Move the player to counterterroist", Command_CT)},
-            //{config.Commands.Spec, ("Move the player to spectate", Command_Spec) }
         };
         foreach (KeyValuePair<IEnumerable<string>, (string description, CommandInfo.CommandCallback handler)> commandPair in commands)
         {
@@ -37,7 +35,19 @@ public static class Command
         if (player != null)
         {
             player.ChangeTeam(CsTeam.Terrorist);
-            player.PrintToChat($"{Instance.Config.Tag} {ChatColors.Orange}You have been moved to {ChatColors.Gold}Terrorist!");
+            command.ReplyToCommand(Instance.Config.Tag + Instance.Localizer["You have been moved to terrorist!"]);   
+        }
+
+        if (command.ArgCount >= 1 && AdminManager.PlayerHasPermissions(player, "@css/generic"))
+        {
+            foreach (var find_player in Utilities.GetPlayers())
+            {
+                if (find_player.PlayerName == command.ArgByIndex(1) || find_player.SteamID.ToString() == command.ArgByIndex(1))
+                {
+                    find_player.ChangeTeam(CsTeam.Terrorist);
+                    break;
+                }
+            }
         }
     }
     public static void Command_CounterTerrorist(CCSPlayerController? player, CommandInfo command)
@@ -45,94 +55,38 @@ public static class Command
         if (player != null)
         {
             player.ChangeTeam(CsTeam.CounterTerrorist);
-            player.PrintToChat($"{Instance.Config.Tag} {ChatColors.Orange}You have been moved to {ChatColors.Blue}Counter-Terrorist!");
+            command.ReplyToCommand(Instance.Config.Tag + Instance.Localizer["You have been moved to counter-terrorist!"]);
         }
-    }
+        if (command.ArgCount >= 1 && AdminManager.PlayerHasPermissions(player, "@css/generic"))
+        {
+            foreach (var find_player in Utilities.GetPlayers())
+            {
+                if (find_player.PlayerName == command.ArgByIndex(1) || find_player.SteamID.ToString() == command.ArgByIndex(1))
+                {
+                    find_player.ChangeTeam(CsTeam.CounterTerrorist);
+                    break;
+                }
+            }
+        }
+    
+    }  
     public static void Command_Spectate(CCSPlayerController? player, CommandInfo command)
     {
         if (player != null)
         {
             player.ChangeTeam(CsTeam.Spectator);
-            player.PrintToChat($"{Instance.Config.Tag} {ChatColors.Orange}You have been moved to {ChatColors.Purple}Spectate!");
+            command.ReplyToCommand(Instance.Config.Tag + Instance.Localizer["You have been moved to spectate!"]);
         }
-    }
-    /*
-    [RequiresPermissions("@css/kick")]
-    [CommandHelper(minArgs: 2, usage: "<#userid or name> [<movet>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
-    public static void Command_T(CCSPlayerController? player, CommandInfo command)
-    {
-        if (player != null)
+        if (command.ArgCount >= 1 && AdminManager.PlayerHasPermissions(player, "@css/generic"))
         {
-            var playerName = player == null ? "Console" : player.PlayerName;
-            var teamName = command.GetArg(2).ToLower();
-            var _teamName = "T";
-            var teamNum = CsTeam.Terrorist;
-            var targets = GetTarget(command);
-            if (targets == null) return;
-
-            var playersToTarget = targets.Players.Where(player => player is { IsValid: true, IsHLTV: false }).ToList();
-
-            switch (teamName)
+            foreach (var find_player in Utilities.GetPlayers())
             {
-                case "t":
-                case "terrorist":
-                    teamNum = CsTeam.Terrorist;
-                    _teamName = "T";
+                if (find_player.PlayerName == command.ArgByIndex(1) || find_player.SteamID.ToString() == command.ArgByIndex(1))
+                {
+                    find_player.ChangeTeam(CsTeam.Spectator);
                     break;
+                }
             }
         }
     }
-    [RequiresPermissions("@css/kick")]
-    [CommandHelper(minArgs: 2, usage: "<#userid or name> [<movect>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
-    public static void Command_CT(CCSPlayerController? player, CommandInfo command)
-    {
-        if (player != null)
-        {
-            var playerName = player == null ? "Console" : player.PlayerName;
-            var teamName = command.GetArg(2).ToLower();
-            var _teamName = "CT";
-            var teamNum = CsTeam.CounterTerrorist;
-
-            var targets = GetTarget(command);
-            if (targets == null) return;
-
-            var playersToTarget = targets.Players.Where(player => player is { IsValid: true, IsHLTV: false }).ToList();
-
-            switch (teamName)
-            {
-                case "ct":
-                case "counterterrorist":
-                    teamNum = CsTeam.CounterTerrorist;
-                    _teamName = "CT";
-                    break;
-            }
-        }
-    }
-    [RequiresPermissions("@css/kick")]
-    [CommandHelper(minArgs: 2, usage: "<#userid or name> [<movespec>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
-    public static void Command_Spec(CCSPlayerController? player, CommandInfo command)
-    {
-        if (player != null)
-        {
-            var playerName = player == null ? "Console" : player.PlayerName;
-            var teamName = command.GetArg(2).ToLower();
-            var _teamName = "spec";
-            var teamNum = CsTeam.Spectator;
-
-            var targets = GetTarget(command);
-            if (targets == null) return;
-
-            var playersToTarget = targets.Players.Where(player => player is { IsValid: true, IsHLTV: false }).ToList();
-
-            switch (teamName)
-            {
-                case "spec":
-                case "spectate":
-                    teamNum = CsTeam.Spectator;
-                    _teamName = "Spec";
-                    break;
-            }
-        }
-    }
-    */
 }
