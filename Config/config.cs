@@ -1,26 +1,34 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
-using System.Reflection;
 using System.Text.Json.Serialization;
-
-namespace ChangeTeams;
-
-public class TeamsConfig : BasePluginConfig
+public class PluginConfig : BasePluginConfig
 {
-    [JsonPropertyName("ChatTag")] public string Tag { get; set; } = "[{green}SWAP{default}]";
-    [JsonPropertyName("Commands")] public Config_Command Commands { get; set; } = new Config_Command();
-    [JsonPropertyName("ForceTeamEnabled")] public bool ForceTeamEnable { get; set; } = false;
-}
+    [JsonPropertyName("Tag")] public string Tag { get; set; } = "{red}[SWAP]{default} ";
 
-    public class Config_Command
+    [JsonPropertyName("Permissions")] public List<string> Permissions { get; set; } = new List<string>();
+    public Config_Commands_Player CommandsPlayer { get; set; } = new Config_Commands_Player();
+    public Config_Commands_Admin CommandsAdmin { get; set; } = new Config_Commands_Admin();
+
+    public class Config_Commands_Player
     {
-        //players commands
-        public string[] Terrorist { get; set; } = ["terroist", "t"];
-        public string[] CounterTerrorist { get; set; } = ["ct", "counterterrorist"];
-        public string[] Spectate { get; set; } = ["spec", "spectate", "s"];
+        [JsonPropertyName("Terrorist")]
+        public string[] Terrorist { get; set; } = { "t", "terrorist" };
 
-    [JsonPropertyName("Admins Commands")]
-        public string[] T { get; set; } = ["!t {Name}"];
-        public string[] CT { get; set; } = ["!ct {Name}"];
-        public string[] Spec { get; set; } = ["!spec {Name}"];
+        [JsonPropertyName("Spectator")]
+        public string[] Spectate { get; set; } = { "afk", "spectate" };
     }
+    public class Config_Commands_Admin
+    {
+        [JsonPropertyName("Terrorist")]
+        public string[] Terrorist { get; set; } = { "movet", "moveterrorist" };
+
+        [JsonPropertyName("CounterTerrorist")]
+        public string[] CounterTerrorist { get; set; } = { "movect", "movecounterterrorist" };
+
+        [JsonPropertyName("Spectator")]
+        public string[] Spectate { get; set; } = { "spec", "movespectate" };
+
+        [JsonPropertyName("Swapper")]
+        public string[] Swapper { get; set; } = { "swap" };
+    }
+}

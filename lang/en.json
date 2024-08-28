@@ -1,0 +1,13 @@
+{
+  "player.afk": "You went {red}afk{default}!",
+  "player.terrorist": "You went to {orange}terrorist{default}!",
+  "player.counter_terrorist": "You went to {blue}counter-terrorist{default}!",
+  "admin.spectator": "You've been moved to {purple}spectate{default} by {red}{0}{default}!",
+  "admin.terrorist": "You've been moved to {orange}terrorist{default} by {red}{0}{default}!",
+  "admin.counter_terrorist": " You've been moved to {blue}counter-terrorist{default} by {red}{0}{default}!",
+  "player.tmove.announcement": "{red}{0}{default} was moved to {orange}terrorist{default} by {red}{1}{default}!",
+  "player.ctmove.announcement": "{red}{0}{default} was moved to {blue}counter-terrorist{default} by {red}{1}{default}!",
+  "player.spec_move.announcement": "{red}{0}{default} was moved to {purple}spectate{default} by {red}{1}{default}!",
+  "player.swap.announcement": "{red}{0}{default} was swapped by {red}{1}{default}!",
+  "player.swap": "You've been swapped by {red}{0}{default}!"
+}

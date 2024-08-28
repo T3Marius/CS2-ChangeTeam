@@ -1,0 +1,13 @@
+{
+  "player.afk": "Ai intrat {red}afk{default}!",
+  "player.terrorist": "Ai intrat la {orange}terroristi{default}!",
+  "player.counter_terrorist": "Ai intrat la {blue}counter-terroristi{default}!",
+  "admin.spectator": "Ai fost mutat la {purple}spectate{default} de catre {red}{0}{default}!",
+  "admin.terrorist": "Ai fost mutat la {orange}terrorist{default} de catre {red}{0}{default}!",
+  "admin.counter_terrorist": " Ai fost mutat la {blue}counter-terrorist{default} de catre {red}{0}{default}!",
+  "player.tmove.announcement": "{red}{0}{default} A fost mutat la {orange}terrorist{default} de catre {red}{1}{default}!",
+  "player.ctmove.announcement": "{red}{0}{default} A fost mutat la {blue}counter-terrorist{default} de catre {red}{1}{default}!",
+  "player.spec_move.announcement": "{red}{0}{default} A fost mutat la {purple}spectate{default} de catre {red}{1}{default}!",
+  "player.swap.announcement": "{red}{0}{default} a primit swap de la {red}{1}{default}!",
+  "player.swap": "Ai primit swap de la {red}{0}{default}!"
+}
