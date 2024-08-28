@@ -1,262 +1,178 @@
-﻿using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
-using CounterStrikeSharp.API.Core.Translations;
-using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Modules.Commands.Targeting;
 using CounterStrikeSharp.API.Modules.Utils;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
-using Microsoft.Extensions.Logging;
-using System.Numerics;
-using Vector = CounterStrikeSharp.API.Modules.Utils.Vector;
+using CounterStrikeSharp.API.Modules.Admin;
+using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core.Translations;
 
-namespace ChangeTeams;
-
-public class ChangeTeams : BasePlugin, IPluginConfig<TeamsConfig>
+namespace ChangeTeams
 {
-    public override string ModuleAuthor => "Marius";
-    public override string ModuleName => "ChangeTeams";
-    public override string ModuleVersion => "0.0.4";
-    public TeamsConfig Config { get; set; } = new();
-    public static ChangeTeams Instance { get; set; } = new();
-
-    public Random Random = new Random();
-    public override void Load(bool hotReload)
+    public class ChangeTeams : BasePlugin, IPluginConfig<PluginConfig>
     {
-        Console.WriteLine("░█████╗░██╗░░██╗░█████╗░███╗░░██╗░██████╗░███████╗████████╗███████╗░█████╗░███╗░░░███╗");
-        Console.WriteLine("██╔══██╗██║░░██║██╔══██╗████╗░██║██╔════╝░██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗░████║");
-        Console.WriteLine("██║░░╚═╝███████║███████║██╔██╗██║██║░░██╗░█████╗░░░░░██║░░░█████╗░░███████║██╔████╔██║");
-        Console.WriteLine("██║░░██╗██╔══██║██╔══██║██║╚████║██║░░╚██╗██╔══╝░░░░░██║░░░██╔══╝░░██╔══██║██║╚██╔╝██║");
-        Console.WriteLine("╚█████╔╝██║░░██║██║░░██║██║░╚███║╚██████╔╝███████╗░░░██║░░░███████╗██║░░██║██║░╚═╝░██║");
-         Console.WriteLine("╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝░╚═════╝░╚══════╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝ ");
-        Instance = this;
-        Command.Load();
-        
-        RegisterListener<Listeners.OnMapStart>(OnMapStart);
-        AddCommandListener("jointeam", Command_Jointeam, HookMode.Pre);
-    }
-    public void OnConfigParsed(TeamsConfig config)
-    {
-        config.Tag = StringExtensions.ReplaceColorTags(config.Tag);
-
-        Config = config;
-    }
-    public TargetResult GetTarget(CommandInfo command)
-    {
-        var identifier = command.GetArg(1); 
-        var matchingPlayers = new List<CCSPlayerController>();  
-
-        if (matchingPlayers.Count != 0)
+        public override string ModuleAuthor => "Marius";
+        public override string ModuleName => "ChangeTeams";
+        public override string ModuleVersion => "0.0.4";
+        public PluginConfig Config { get; set; } = new PluginConfig();
+        public void OnConfigParsed(PluginConfig config)
         {
+            config.Tag = StringExtensions.ReplaceColorTags(config.Tag);
+            Config = config;
         }
+        public static ChangeTeams Instance { get; set; } = new();
 
-        return new TargetResult { Players = matchingPlayers };
-    }
-    public enum JoinTeamReason
-    {
-        TeamsFull = 1,
-        TerroristTeamFull = 2,
-        CTTeamFull = 3,
-        TTeamLimit = 7,
-        CTTeamLimit = 8
-    }
-    public int TerroristSpawns = -1;
-    public int CTSpawns = -1;
-    public bool respectlimitteams = true;
-    private Dictionary<CCSPlayerController, int> SelectedTeam = new Dictionary<CCSPlayerController, int>();
-    public class CustomSpawnPoint
-    {
-        public CsTeam Team { get; set; }
-        public required string Origin { get; set; }
-        public required string Angle { get; set; }
-    }
-
-
-    public HookResult Command_Jointeam(CCSPlayerController? player, CommandInfo info)
-    {
-        if (player != null && player.IsValid && info.ArgCount > 0 && info.ArgByIndex(0).ToLower() == "jointeam")
+        public Random Random = new Random();
+        public override void Load(bool hotReload)
         {
-            if (info.ArgCount > 1)
+            Console.WriteLine("░█████╗░██╗░░██╗░█████╗░███╗░░██╗░██████╗░███████╗████████╗███████╗░█████╗░███╗░░░███╗");
+            Console.WriteLine("██╔══██╗██║░░██║██╔══██╗████╗░██║██╔════╝░██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗░████║");
+            Console.WriteLine("██║░░╚═╝███████║███████║██╔██╗██║██║░░██╗░█████╗░░░░░██║░░░█████╗░░███████║██╔████╔██║");
+            Console.WriteLine("██║░░██╗██╔══██║██╔══██║██║╚████║██║░░╚██╗██╔══╝░░░░░██║░░░██╔══╝░░██╔══██║██║╚██╔╝██║");
+            Console.WriteLine("╚█████╔╝██║░░██║██║░░██║██║░╚███║╚██████╔╝███████╗░░░██║░░░███████╗██║░░██║██║░╚═╝░██║");
+            Console.WriteLine("╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝░╚═════╝░╚══════╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝ ");
+            Instance = this;
+            Command.Load();
+        }
+        public static class Command
+        {
+            public static void Load()
             {
-                string teamArg = info.ArgByIndex(1);
-
-                if (int.TryParse(teamArg, out int teamId))
+                PluginConfig Config = Instance.Config;
+                Dictionary<IEnumerable<string>, (string description, CommandInfo.CommandCallback handler)> commands = new()
                 {
-                    if (teamId >= (int)CsTeam.Spectator && teamId <= (int)CsTeam.CounterTerrorist)
+                    { Config.CommandsPlayer.Terrorist, ("Moves you to terrorist", Command_Terrorist) },
+                    { Config.CommandsPlayer.CounterTerrorist, ("Moves you to counterterrorist", Command_CounterTerrorist) }
+                    { Config.CommandsPlayer.Spectate, ("Moves you to spectate", Command_Afk) },
+                    { Config.CommandsAdmin.Terrorist, ("Moves you to terrorist", Command_MoveTerrorist) },
+                    { Config.CommandsAdmin.CounterTerrorist, ("Moves you to counterterrorist", Command_MoveCounterTerrorist) },
+                    { Config.CommandsAdmin.Spectate, ("Moves you to spectate", Command_MoveSpectate) },
+                    { Config.CommandsAdmin.Swapper, ("Swaps the player's team", Command_Swap) },
+                };
+
+                foreach (KeyValuePair<IEnumerable<string>, (string description, CommandInfo.CommandCallback handler)> commandPair in commands)
+                {
+                    foreach (string command in commandPair.Key)
                     {
-                        SelectedTeam[player] = teamId;
+                        Instance.AddCommand($"css_{command}", commandPair.Value.description, commandPair.Value.handler);
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Failed to parse team ID.");
-                }
             }
-        }
-        return HookResult.Continue;
-    }
 
-    [GameEventHandler(HookMode.Pre)]
-    public HookResult TeamJoinFailed(EventJointeamFailed @event, GameEventInfo info)
-    {
-        CCSPlayerController? player = @event.Userid;
-        if (player == null || !player.IsValid)
-        {
-            return HookResult.Continue;
-        }
-
-        JoinTeamReason m_eReason = (JoinTeamReason)@event.Reason;
-        int iTs = Utilities.GetPlayers().Where(p => p.Team == CsTeam.Terrorist).Count();
-        int iCTs = Utilities.GetPlayers().Where(p => p.Team == CsTeam.CounterTerrorist).Count();
-
-        if (!SelectedTeam.ContainsKey(player))
-        {
-            SelectedTeam[player] = 0;
-        }
-
-        switch (m_eReason)
-        {
-            case JoinTeamReason.TeamsFull:
-
-                if (iCTs >= CTSpawns && iTs >= TerroristSpawns)
-                {
-                    NewSpawnFromDefault("t");
-                    NewSpawnFromDefault("ct");
-                    return HookResult.Continue;
-                }
-
-                break;
-
-            case JoinTeamReason.TerroristTeamFull:
-                if (iTs >= TerroristSpawns)
-                {
-                    return NewSpawnFromDefault("t") ? HookResult.Continue : HookResult.Stop;
-                }
-
-                break;
-
-            case JoinTeamReason.CTTeamFull:
-                if (iCTs >= CTSpawns)
-                {
-                    return NewSpawnFromDefault("ct") ? HookResult.Continue : HookResult.Stop;
-                }
-
-                break;
-
-            default:
-                {
-                    return HookResult.Continue;
-                }
-        }
-
-        return HookResult.Continue;
-    }
-
-    public void OnMapStart(string mapname)
-    {
-        AddTimer(0.1f, () =>
-        {
-            TerroristSpawns = 0;
-            CTSpawns = 0;
-
-            var tSpawns = Utilities.FindAllEntitiesByDesignerName<SpawnPoint>("info_player_terrorist");
-            var ctSpawns = Utilities.FindAllEntitiesByDesignerName<SpawnPoint>("info_player_counterterrorist");
-
-            foreach (var spawn in tSpawns)
+            public static void Command_Terrorist(CCSPlayerController? player, CommandInfo command)
             {
-                TerroristSpawns++;
+                var instance = ChangeTeams.Instance;
+                var Config = instance.Config;
+                if (player != null)
+                {
+                    player.ChangeTeam(CsTeam.Terrorist);
+                    player.PrintToChat(Config.Tag + instance.Localizer["player.terrorist"]);
+                }
             }
 
-            foreach (var spawn in ctSpawns)
+            public static void Command_CounterTerrorist(CCSPlayerController? player, CommandInfo command)
             {
-                CTSpawns++;
+                var instance = ChangeTeams.Instance;
+                var Config = instance.Config;
+                if (player != null)
+                {
+                    player.ChangeTeam(CsTeam.CounterTerrorist);
+                    player.PrintToChat(Config.Tag + instance.Localizer["player.counter_terrorist"]);
+                }
+            }            
+
+            public static void Command_Afk(CCSPlayerController? player, CommandInfo command)
+            {
+                var instance = ChangeTeams.Instance;
+                var Config = instance.Config;
+                if (player != null)
+                {
+                    player.ChangeTeam(CsTeam.Spectator);
+                    player.PrintToChat(Config.Tag + instance.Localizer["player.afk"]);
+                }
             }
-        });
-    }
 
-    public bool NewSpawnFromDefault(string team)
-    {
-        var ctspawns = Utilities.FindAllEntitiesByDesignerName<SpawnPoint>("info_player_counterterrorist").ToList();
-        var tspawns = Utilities.FindAllEntitiesByDesignerName<SpawnPoint>("info_player_terrorist").ToList();
-        if (team == "ct" && ctspawns.Count == 0)
-        {
-            Logger.LogError("This map contains no CT spawns.");
-            return false;
-        }
-        if (team == "t" && tspawns.Count == 0)
-        {
-            Logger.LogError("This map contains no T spawns.");
-            return false;
-        }
-        var spawn = (team == "ct") ? ctspawns[Random.Next(ctspawns.Count)] : tspawns[Random.Next(tspawns.Count)];
-        var origin = spawn.AbsOrigin;
-        var angle = spawn.AbsRotation;
-        if (origin == null || angle == null)
-        {
-            Logger.LogError("Origin or angle not found when attempting to create a spawn.");
-            return false;
-        }
+            public static void Command_MoveTerrorist(CCSPlayerController? player, CommandInfo command)
+            {
+                var instance = ChangeTeams.Instance;
+                var Config = instance.Config;
+                if (player != null && command.ArgCount >= 1 && Config.Permissions.Any(permission => AdminManager.PlayerHasPermissions(player, permission)))
+                {
+                    foreach (var find_player in Utilities.GetPlayers())
+                    {
+                        if (find_player.PlayerName == command.ArgByIndex(1) || find_player.SteamID.ToString() == command.ArgByIndex(1))
+                        {
+                            find_player.ChangeTeam(CsTeam.Terrorist);
+                            find_player.PrintToChat(string.Format(Config.Tag + instance.Localizer["admin.terrorist"], player.PlayerName));
+                            Server.PrintToChatAll(string.Format(Config.Tag + instance.Localizer["player.tmove.announcement"], find_player.PlayerName, player.PlayerName));
+                        }
+                    }
+                }
+            }
 
-        var point = new CustomSpawnPoint
-        {
-            Team = team == "ct" ? CsTeam.CounterTerrorist : CsTeam.Terrorist,
-            Origin = VectorToString(new Vector3(origin.X, origin.Y, origin.Z)),
-            Angle = VectorToString(new Vector3(angle.X, angle.Y, angle.Z))
-        };
+            public static void Command_MoveCounterTerrorist(CCSPlayerController? player, CommandInfo command)
+            {
+                var instance = ChangeTeams.Instance;
+                var Config = instance.Config;
+                if (player != null && command.ArgCount >= 1 && Config.Permissions.Any(permission => AdminManager.PlayerHasPermissions(player, permission)))
+                {
+                    foreach (var find_player in Utilities.GetPlayers())
+                    {
+                        if (find_player.PlayerName == command.ArgByIndex(1) || find_player.SteamID.ToString() == command.ArgByIndex(1))
+                        {
+                            find_player.ChangeTeam(CsTeam.CounterTerrorist);
+                            find_player.PrintToChat(string.Format(Config.Tag + instance.Localizer["admin.counter_terrorist"], player.PlayerName));
+                            Server.PrintToChatAll(string.Format(Config.Tag + instance.Localizer["player.ctmove.announcement"], find_player.PlayerName, player.PlayerName));
+                        }
+                    }
+                }
+            }
 
-        if (CreateEntity(point))
-        {
-            if (team == "ct") CTSpawns++;
-            else TerroristSpawns++;
+            public static void Command_MoveSpectate(CCSPlayerController? player, CommandInfo command)
+            {
+                var instance = ChangeTeams.Instance;
+                var Config = instance.Config;
+                if (player != null && command.ArgCount >= 1 && Config.Permissions.Any(permission => AdminManager.PlayerHasPermissions(player, permission)))
+                {
+                    foreach (var find_player in Utilities.GetPlayers())
+                    {
+                        if (find_player.PlayerName == command.ArgByIndex(1) || find_player.SteamID.ToString() == command.ArgByIndex(1))
+                        {
+                            find_player.ChangeTeam(CsTeam.Spectator);
+                            find_player.PrintToChat(string.Format(Config.Tag + instance.Localizer["admin.spectator"], player.PlayerName));
+                            Server.PrintToChatAll(string.Format(Config.Tag + instance.Localizer["player.spec_move.announcement"], find_player.PlayerName, player.PlayerName));
+                        }
+                    }
+                }
+            }
 
-            Logger.LogInformation($"New {team} spawn created.");
-            return true;
+            public static void Command_Swap(CCSPlayerController? player, CommandInfo command)
+            {
+                var instance = ChangeTeams.Instance;
+                var Config = instance.Config;
+                if (player != null && command.ArgCount >= 1 && Config.Permissions.Any(permission => AdminManager.PlayerHasPermissions(player, permission)))
+                {
+                    foreach (var find_player in Utilities.GetPlayers())
+                    {
+                        if (find_player.PlayerName == command.ArgByIndex(1) || find_player.SteamID.ToString() == command.ArgByIndex(1))
+                        {
+                            string playerName = player.PlayerName;
+                            string find_playerName = find_player.PlayerName;
+
+                            if (find_player.Team == CsTeam.Terrorist)
+                            {
+                                find_player.ChangeTeam(CsTeam.CounterTerrorist);
+                                find_player.PrintToChat(string.Format(Config.Tag + instance.Localizer["admin.counter_terrorist"], playerName));
+                                Server.PrintToChatAll(string.Format(Config.Tag + instance.Localizer["player.ctmove.announcement"], find_playerName, playerName));
+                            }
+                            else if (find_player.Team == CsTeam.CounterTerrorist)
+                            {
+                                find_player.ChangeTeam(CsTeam.Terrorist);
+                                find_player.PrintToChat(string.Format(Config.Tag + instance.Localizer["admin.terrorist"], playerName));
+                                Server.PrintToChatAll(string.Format(Config.Tag + instance.Localizer["player.tmove.announcement"], find_playerName, playerName));
+                            }
+                        }
+                    }
+                }
+            }
         }
-        else
-        {
-            Logger.LogInformation("Spawn creation failed.");
-            return false;
-        }
-    }
-
-    public bool CreateEntity(CustomSpawnPoint spawnPoint)
-    {
-        var noVel = new Vector(0f, 0f, 0f);
-        SpawnPoint? entity;
-        if (spawnPoint.Team == CsTeam.Terrorist)
-        {
-            entity = Utilities.CreateEntityByName<CInfoPlayerTerrorist>("info_player_terrorist");
-        }
-        else
-        {
-            entity = Utilities.CreateEntityByName<CInfoPlayerCounterterrorist>("info_player_counterterrorist");
-        }
-        if (entity == null)
-        {
-            return false;
-        }
-        var angle = StringToVector(spawnPoint.Angle);
-        entity.Teleport(NormalVectorToValve(StringToVector(spawnPoint.Origin)), new QAngle(angle.X, angle.Y, angle.Z), noVel);
-        entity.DispatchSpawn();
-        return true;
-    }
-
-    private static string VectorToString(Vector3 vec)
-    {
-        return $"{vec.X}|{vec.Y}|{vec.Z}";
-    }
-
-    private static Vector3 StringToVector(string str)
-    {
-        var explode = str.Split("|");
-        return new Vector3(x: float.Parse(explode[0]), y: float.Parse(explode[1]), z: float.Parse(explode[2]));
-    }
-
-    private static Vector NormalVectorToValve(Vector3 v)
-    {
-        return new Vector(v.X, v.Y, v.Z);
-    }
-    public static int GetTeamPlayerCount(CsTeam team)
-    {
-        return Utilities.GetPlayers().Count(p => p.Team == team);
     }
 }
