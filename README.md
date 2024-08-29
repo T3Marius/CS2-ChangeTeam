@@ -28,42 +28,26 @@ ALL THE COMMANDS ARE CONFIGURABLE IN CONFIG FILE.
 ```
 # Config
 ```
-{
-  "Tag": "{red}[SWAP]{default} ",
-  "Permissions": ["@css/generic"], // flags who have acces to move commands.
-  "CommandsPlayer": {
-    "Terrorist": [
-      "t",
-      "terrorist"
-    ],
-    "CounterTerrorist": [
-      "ct",
-      "counterterrorist"
-    ],
-    "Spectator": [
-      "afk",
-      "spectate"
-    ]
-  }, // commands used by admin, able to move players through teams.
-  "CommandsAdmin": {
-    "Terrorist": [
-      "movet", // !movet {playername}
-      "moveterrorist"
-    ],
-    "CounterTerrorist": [
-      "movect",  // !movect {playername}
-      "movecounterterrorist"
-    ],
-    "Spectator": [
-      "spec", // !spec {playername}
-      "movespectate"
-    ],
-    "Swapper": [
-      "swap" // !swap {playername} if a player is terrorist and you use swap command on him it swaps him to counter terrorist.
-    ]
-  },
-  "ConfigVersion": 1
-}
+[Tag]
+Tag = "{red}[ChangeTeams]{default} "
+
+[Permissions]
+FLAGS = ["@css/generic"]
+
+[CommandsAdmin]
+
+# Admin commands configuration
+MoveTerrorist = ["movet"]  # Commands for moving to the Terrorist team
+MoveCounterTerrorist = ["movect"]  # Commands for moving to the Counter-Terrorist team
+MoveSpectate = ["spec"]  # Commands for moving to the Spectator team
+Swapper = ["swap"]  # Command for swapping teams
+
+[CommandsPlayer]
+
+# Player commands configuration
+Terrorist = ["t"]  # Commands for players to join the Terrorist team
+CounterTerrorist = ["ct"]  # Commands for players to join the Counter-Terrorist team
+Spectate = ["afk"]  # Commands for players to join the Spectator team
 ```
 
 
